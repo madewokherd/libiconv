@@ -1,0 +1,55 @@
+@import @"version.inc";
+
+configurations {
+	UserPlatformToolset {
+	    // Needed because autopackage lacks VS2015 support
+    	key = "PlatformToolset";
+    	choices: "v100,v110,v120,v140";
+	};
+};
+
+nuget {
+    nuspec {
+        id = libiconv.vp;
+        version : ${package-version};
+        title: libiconv;
+        authors: {Bruno Haible};
+        owners: {CoApp Project, Vincent Povirk};
+        licenseUrl: "https://github.com/madewokherd/libiconv/blob/upstream/COPYING.LIB";
+        projectUrl: "http://github.com/madewokherd/libiconv";
+        requireLicenseAcceptance:false;
+        summary:GNU iconv library;
+        description: @"GNU iconv library
+homepage: https://www.gnu.org/software/libiconv/";
+        releaseNotes: "Release of libiconv 1.14 libraries.";
+        copyright: Copyright 2013;
+        tags: { iconv, libiconv, native, CoApp, v100, v110, v120, v140, dynamic };
+
+    };
+
+    files {
+        include: {
+            "iconv.h",
+        };
+        
+        source += {
+            "*.h",
+            "..\lib\*.h",
+            "..\lib\iconv.c",
+            "..\libcharset\lib\localcharset.c",
+        };
+
+        ("v100,v110,v120,v140", "Win32,x64", "release,debug", "Dynamic") => {
+            [${0},${1},${2},${3}] {
+                bin:     { .\output\${0}\${1}\${2}\${3}\libiconv.dll };
+                lib:     { .\output\${0}\${1}\${2}\${3}\libiconv.lib };
+                symbols: { .\output\${0}\${1}\${2}\${3}\libiconv.pdb };
+            };
+        };
+    };
+
+    targets {
+        Defines += HAS_LIBICONV;
+    };
+}
+
